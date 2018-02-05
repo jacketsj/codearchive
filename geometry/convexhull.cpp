@@ -24,7 +24,6 @@ inline double p2(double a)
 }
 bool ang_compare(const pt &a, const pt &b)
 {
-	
 	double det = (b.x-a.x)*(basis.y-a.y) - (basis.x-a.x)*(b.y-a.y);
 	if (det-eps > 0)
 		return false;
@@ -45,13 +44,13 @@ vector<int> giftwrap(const vector<pt> &points)
 		const pt &p = points[i];
 		if (p.y < boty)
 		{
-			bot = i; boty = p.y;
+			bot = i;
+			boty = p.y;
 		}
 	}
 	vector<int> ret; ret.push_back(bot);
 	if (n == 1)
 		return ret;
-
 	int cur = bot;
 	do
 	{
@@ -79,7 +78,6 @@ const vector<pt> *gsp;
 vector<int> grahamscan(const vector<pt> &points)
 {
 	gsp = &points;
-
 	int n = points.size();
 	if (n == 0)
 		return vector<int>();
@@ -92,7 +90,6 @@ vector<int> grahamscan(const vector<pt> &points)
 			bot = i; boty = p.y;
 		}
 	}
-
 	basis = points[bot];
 	vector<int> points_s; points_s.resize(n);
 	for (int i = 0; i < n; ++i)
@@ -121,7 +118,6 @@ vector<int> grahamscan(const vector<pt> &points)
 				rets.push(cur);
 		}
 	}
-
 	vector<int> ret;
 	while (!rets.empty())
 	{
