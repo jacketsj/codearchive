@@ -18,7 +18,7 @@ void countingsort(vector<int> &arr)
 		count[i]+=count[i-1];
 	vector<int> ret; ret.resize(arr.size());
 	for (auto x : arr)
-		ret[(count[x-m]--)-1] = x;
+		ret[--count[x-m]] = x;
 	arr = ret;
 }
 
