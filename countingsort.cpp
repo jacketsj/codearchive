@@ -18,9 +18,7 @@ void countingsort(vector<int> &arr)
 		count[i]+=count[i-1];
 	vector<int> ret; ret.resize(arr.size());
 	for (auto x : arr)
-	{
-		ret[count[x]--] = x;
-	}
+		ret[(count[x-m]--)-1] = x;
 	arr = ret;
 }
 
@@ -30,7 +28,7 @@ int main()
 	vector<int> arr;
 	int size = 20;
 	for (int i = 0; i < size; ++i)
-		arr.push_back(rand()%size);
+		arr.push_back(rand()%size-size/2);
 	cout << "Before: ";
 	for (auto x : arr)
 		cout << x << ' ';
