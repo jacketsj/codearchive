@@ -90,9 +90,7 @@ struct graph
 		else
 			ce(v,u).f -= df;
 		cv(u)-=df; cv(v)+=df;
-		cout << "Pushing " << df << " on " << u << "->" << v << '\n';
 	}
-
 	bool admisscap(int u, int v)
 	{
 		if (e(u,v))
@@ -101,7 +99,6 @@ struct graph
 	}
 	bool admiss(int u, int v)
 	{
-		//cout << "Checking admission: " << u << "->" << v << '\n';
 		return admisscap(u,v) && h(u)>h(v);
 	}
 	void reladj(int u)
@@ -129,7 +126,6 @@ struct graph
 					minh = h(v);
 				}
 				minh = min(minh, h(v));
-				cout << "    Relabel: " << u << " adj to " << v << "=" << h(v) << '\n';
 			}
 		for (int v : ra(u))
 			if (admisscap(u,v))
@@ -140,13 +136,10 @@ struct graph
 					minh = h(v);
 				}
 				minh = min(minh, h(v));
-				cout << "    Relabel: " << u << " adj to " << v << "=" << h(v) << '\n';
 			}
 		h(u) = 1+minh;
 		reladj(u);
-		cout << "Relabelling: u=" << u << " : " << h(u) << '\n';
 	}
-
 	void initprefl(int s)
 	{
 		for (int i = 0; i < n(); ++i)
@@ -170,7 +163,6 @@ struct graph
 	}
 	void discharge(int u)
 	{
-		cout << "Discharging: u=" << u << '\n';
 		while (cv(u) > 0)
 		{
 			
@@ -269,7 +261,6 @@ int main()
 			cout << "    Edge (" << i << ',' << a << ")=" << g.ce(i,a).f << '/' << g.ce(i,a).c << '\n';
 	for (int i = 0; i < n; ++i)
 		cout << "    Vertex " << i << "=" << g.cv(i) << '\n';
-
 
 	vector<vector<int>> adj2; adj2.resize(n);
 	adj2[0].push_back(2);
