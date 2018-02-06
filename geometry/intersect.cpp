@@ -39,5 +39,4 @@ int main()
 	linseg ls1(a,b), ls2(c,d), ls3(e,f);
 	cout << "Lines " << prt(ls1) << " and " << prt(ls2) << " instersect: " << ls1.isect(ls2) << '\n';
 	cout << "Lines " << prt(ls1) << " and " << prt(ls3) << " instersect: " << ls1.isect(ls3) << '\n';
-	
 }
