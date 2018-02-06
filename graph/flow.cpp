@@ -237,7 +237,6 @@ struct graph
 int main()
 {
 	int n = 6;
-	//graph(vector<vector<double>> caps,vector<vector<int>> adj) : m(l2m(adj)), adj(adj)
 	vector<vector<int>> adj; adj.resize(n);
 	adj[0].push_back(1);
 	adj[0].push_back(2);
@@ -262,14 +261,38 @@ int main()
 	caps[4][1] = 5;
 	caps[4][3] = 3;
 	caps[5][4] = 2;
-	
 	graph g(caps,adj);
 	g.maxflow(0,3);
-
-	cout << "Max flow of graph1=" << g.cv(3) << '\n'; //should be 10 in this case
+	cout << "Max flow of graph1=" << g.cv(3) << '\n'; //should be 9 in this case
 	for (int i = 0; i < n; ++i)
 		for (int a : adj[i])
 			cout << "    Edge (" << i << ',' << a << ")=" << g.ce(i,a).f << '/' << g.ce(i,a).c << '\n';
 	for (int i = 0; i < n; ++i)
 		cout << "    Vertex " << i << "=" << g.cv(i) << '\n';
+
+
+	vector<vector<int>> adj2; adj2.resize(n);
+	adj2[0].push_back(2);
+	adj2[0].push_back(1);
+	adj2[1].push_back(2);
+	adj2[2].push_back(1);
+	adj2[5].push_back(3);
+	adj[3].push_back(5);
+	vector<vector<double>> caps2; caps2.resize(n);
+	for (vector<double> &v : caps2)
+		v.resize(n);
+	caps2[0][2] = 1;
+	caps2[0][1] = 2;
+	caps2[1][2] = 1;
+	caps2[2][1] = 1;
+	caps2[5][3] = 3;
+	caps[3][5] = 3;
+	graph g2(caps2,adj2);
+	g2.maxflow(0,2);
+	cout << "Max flow of graph2=" << g2.cv(2) << '\n'; //should be 2 in this case
+	for (int i = 0; i < n; ++i)
+		for (int a : adj2[i])
+			cout << "    Edge (" << i << ',' << a << ")=" << g2.ce(i,a).f << '/' << g2.ce(i,a).c << '\n';
+	for (int i = 0; i < n; ++i)
+		cout << "    Vertex " << i << "=" << g2.cv(i) << '\n';
 }
