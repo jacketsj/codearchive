@@ -26,9 +26,22 @@ struct avl
 			return -1;
 		return a->h;
 	}
-	bool balance() const
+	int balance() const
 	{
+		//cout << "Balance of " << key << " checked: r.h=" << height(r) << ", l.h=" << height(l) << " so returning " << height(r)-height(l) << '\n';
 		return height(r) - height(l);
+	}
+	static string print(const avl* a)
+	{
+		if (a == NULL)
+			return "";
+		return " (" + print(a->l) + "<-" + (a->value) + "->" + print(a->r) + ") ";
+	}
+	void update()
+	{
+		h = max(height(l),height(r))+1;
+		//cout << "Updated height of " << key << ", now=" << h << '\n';
+		c = count(l) + count(r) + 1;
 	}
 	static void rotL(avl* &a)
 	{
@@ -36,6 +49,8 @@ struct avl
 		a->r = rc->l;
 		rc->l = a;
 		a = rc;
+		a->l->update();
+		a->update();
 	}
 	static void rotR(avl* &a)
 	{
@@ -43,40 +58,47 @@ struct avl
 		a->l = lc->r;
 		lc->r = a;
 		a = lc;
+		a->r->update();
+		a->update();
 	}
 	static void rotLR(avl* &a)
 	{
-		rotL(a->r);
+		rotL(a->l);
 		rotR(a);
 	}
 	static void rotRL(avl* &a)
 	{
-		rotR(a->l);
+		rotR(a->r);
 		rotL(a);
 	}
-	static void selfbalance(avl* &a, avl* heavy)
+	static void selfbalance(avl* &a, avl* heavy) //also updates
 	{
 		if (a == NULL)
 			return;
-		a->h = max(height(a->l),height(a->r));
-		a->c = count(a->l) + count(a->r);
-		if (heavy == a->r && a->balance() > 1)
+		a->update();
+		//if (heavy == a->r && a->balance() > 1)
+		//cout << "Bal of " << a->key << "=" << a->balance() << '\n';
+		if (a->balance() > 1)
 		{
-			if (heavy->balance() >= 0)
+			//cout << "Balancing: " << a->key << '\n';
+			//if (heavy->balance() >= 0)
+			if (a->r->balance() >= 0)
 				rotL(a);
 			else
 				rotRL(a);
 		}
-		else if (heavy == a->l && a->balance() < 1)
+		//else if (heavy == a->l && a->balance() < -1)
+		else if (a->balance() < -1)
 		{
-			if (heavy->balance() <= 0)
+			//cout << "Balancing: " << a->key << '\n';
+			//if (heavy->balance() <= 0)
+			if (a->l->balance() <= 0)
 				rotR(a);
 			else
 				rotLR(a);
 		}
+		a->update();
 	}
-	//operator[] - kth elem
-	//operator() - key to value (lookup)
 	static void insert(avl* &a, kt key, vt value)
 	{
 		if (a == NULL)
@@ -95,14 +117,24 @@ struct avl
 			selfbalance(a, a->r);
 		}
 	}
+	static avl* join(avl* &a, avl* &b)
+	{
+		if (a == NULL)
+			return b;
+		else if (b == NULL)
+			return a;
+		//TODO wat do (need log time)
+		return NULL;
+	}
 	static void remove(avl* &a, kt key)
 	{
 		if (a == NULL)
 			return;
 		if (key == a->key)
 		{
+			avl* temp = a;
+			a = join(a->l, a->r);
 			delete a;
-			a = NULL;
 		}
 		else if (key < a->key)
 		{
@@ -131,13 +163,16 @@ struct avl
 	//TODO fix
 	static vt& get(avl* &a, int i) //order statistics
 	{
-		if (a == NULL || i < 0 || i >= a->c) //out of bounds
+		if (a == NULL) //out of bounds
 			//return 0;
 			//return vt();
 			return fail;
 		int lc = count(a->l);
 		if (i == lc)
+		{
+			//cout << "Found index: " << i << '\n';
 			return a->value;
+		}
 		else if (i < lc)
 			return get(a->l,i);
 		else
@@ -150,9 +185,14 @@ struct avlt
 	avlt() : root(NULL) {}
 	//operator[] - kth elem
 	//operator() - key to value (lookup)
+	string print()
+	{
+		return avl::print(root);
+	}
 	void insert(kt key, vt value)
 	{
 		avl::insert(root,key,value);
+		cout << print() << '\n';
 	}
 	void remove(kt key)
 	{
@@ -174,21 +214,25 @@ struct avlt
 	{
 		return get(i);
 	}
-
 };
 
 //usage
 int main()
 {
-	vector<int> testkeys = {1, 2, 3, 4, 0, -1, -2, -3, -6, -4, -3};
+	vector<int> testkeys = {1, 2, 3, 4, 0, -1, -2, -3, -6, -4, -3}; //Note that -3 appears twice
 	vector<string> testvals = {"1", "2", "3", "4", "0", "-1", "-2", "-3", "-6", "-4", "-3"};
+	//vector<int> testkeys = {1, 2, 3, 4};
+	//vector<string> testvals = {"1", "2", "3", "4"};
 	int n = testkeys.size();
 	assert(n == testvals.size());
 	avlt t;
 	for (int i = 0; i < n; ++i)
 		t.insert(testkeys[i],testvals[i]);
-	for (int i = n-1; i >= 0; --i)
-		cout << "testkey[" << testkeys[i] << "]=" << t(testkeys[i]) << '\n';
+//	for (int i = n-1; i >= 0; --i)
+//		cout << "testkey[" << testkeys[i] << "]=" << t(testkeys[i]) << '\n';
 	for (int k = -2; k <= n; ++k)
 		cout << "the " << k << "-indexed value is " << t[k] << '\n';
+//	for (int k = 1; k <= min(4,n-1); ++k)
+//		cout << "the " << k << "-indexed value is " << t[k] << '\n';
+	cout << t.print() << '\n';
 }
