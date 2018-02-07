@@ -13,7 +13,7 @@ struct avl
 	avl *l, *r;
 	int h; //height
 	int c; //number of nodes in tree
-	avl(kt key, vt value) : key(key), value(value), l(NULL), r(NULL), h(0) {}
+	avl(kt key, vt value) : key(key), value(value), l(NULL), r(NULL), h(0), c(1) {}
 	static int count(const avl* a)
 	{
 		if (a == NULL)
@@ -169,10 +169,7 @@ struct avl
 			return fail;
 		int lc = count(a->l);
 		if (i == lc)
-		{
-			//cout << "Found index: " << i << '\n';
 			return a->value;
-		}
 		else if (i < lc)
 			return get(a->l,i);
 		else
@@ -192,7 +189,6 @@ struct avlt
 	void insert(kt key, vt value)
 	{
 		avl::insert(root,key,value);
-		cout << print() << '\n';
 	}
 	void remove(kt key)
 	{
@@ -221,18 +217,14 @@ int main()
 {
 	vector<int> testkeys = {1, 2, 3, 4, 0, -1, -2, -3, -6, -4, -3}; //Note that -3 appears twice
 	vector<string> testvals = {"1", "2", "3", "4", "0", "-1", "-2", "-3", "-6", "-4", "-3"};
-	//vector<int> testkeys = {1, 2, 3, 4};
-	//vector<string> testvals = {"1", "2", "3", "4"};
 	int n = testkeys.size();
 	assert(n == testvals.size());
 	avlt t;
 	for (int i = 0; i < n; ++i)
 		t.insert(testkeys[i],testvals[i]);
-//	for (int i = n-1; i >= 0; --i)
-//		cout << "testkey[" << testkeys[i] << "]=" << t(testkeys[i]) << '\n';
+	for (int i = n-1; i >= 0; --i)
+		cout << "testkey[" << testkeys[i] << "]=" << t(testkeys[i]) << '\n';
 	for (int k = -2; k <= n; ++k)
 		cout << "the " << k << "-indexed value is " << t[k] << '\n';
-//	for (int k = 1; k <= min(4,n-1); ++k)
-//		cout << "the " << k << "-indexed value is " << t[k] << '\n';
 	cout << t.print() << '\n';
 }
