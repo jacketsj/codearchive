@@ -150,7 +150,6 @@ struct graph
 		for (int u = 0; u < n(); ++u)
 			for (auto v : a(u))
 				ce(u,v).f=0;
-	
 		h(s) = n();
 		for (auto v : a(s))
 		{
@@ -165,7 +164,6 @@ struct graph
 	{
 		while (cv(u) > 0)
 		{
-			
 			if (currentn[u] == currentcount[u])
 			{
 				relabel(u);
@@ -187,40 +185,55 @@ struct graph
 		if (s == t)
 			return;
 		initprefl(s);
-		vector<int> L; //LL, -1 is tail, index is key
-		int k = 0;
+		if (n() == 2)
+			return;
+		//vector<int> L; //LL, -1 is tail, index is key
+		vector<int> Lnode, Lnext;
 		for (int i = 0; i < n(); ++i)
-			L.push_back(i);
-		while (L[s] == t || L[s] == s)
-			++L[s];
-		while (L[t] == s || L[t] == t)
-			++L[t];
-		for (int i = 0; i < n()-1; ++i)
-			L[i] = L[i+1];
-		L[n()-1] = -1;
-		int head = 0; //index of head
-		while (head == s || head == t)
-			++head;
-		auto u = head;
+			if (i != s && i != t)
+				Lnode.push_back(i);
+		int n0 = n()-2;
+		Lnext.resize(n0);
+		for (int i = 0; i < n0-1; ++i)
+			Lnext[i] = i+1;
+		Lnext[n0-1]=-1; //next node is bad
+		int head = 0; //first node in L;
+		int u0 = head;
+		//int k = 0;
+		//for (int i = 0; i < n(); ++i)
+		//	L.push_back(i);
+		//while (L[s] == t || L[s] == s)
+		//	++L[s];
+		//while (L[t] == s || L[t] == t)
+		//	++L[t];
+		//for (int i = 0; i < n()-1; ++i)
+		//	L[i] = L[i+1];
+		//L[n()-1] = -1;
+		//int head = 0; //index of head
+		//while (head == s || head == t)
+		//	++head;
+		//auto u = head;
 		int p = -1;
-		while (u != -1)
+		while (u0 != -1)
 		{
+			int u = Lnode[u0];
+			cout << "Discharging: " << u << endl;
 			int oh = h(u);
 			discharge(u);
 			if (h(u)>oh)
 			{
 				if (p >= 0)
 				{
-					L[p] = L[u];
+					Lnext[p] = Lnext[u0];
 				}
-				if (u != head)
+				if (u0 != head)
 				{
-					L[u] = head;
-					head = u;
+					Lnext[u0] = head;
+					head = u0;
 				}
 			}
-			p = u;
-			u = L[u];
+			p = u0;
+			u0 = Lnext[u0];
 		}
 	}
 };
@@ -232,30 +245,32 @@ int main()
 	vector<vector<int>> adj; adj.resize(n);
 	adj[0].push_back(1);
 	adj[0].push_back(2);
-	adj[0].push_back(5);
-	adj[1].push_back(3);
-	adj[2].push_back(3);
+	adj[0].push_back(3);
+	adj[1].push_back(5);
+	adj[2].push_back(5);
+	adj[2].push_back(0);
 	adj[1].push_back(2);
 	adj[2].push_back(4);
 	adj[4].push_back(1);
-	adj[4].push_back(3);
-	adj[5].push_back(4);
+	adj[4].push_back(5);
+	adj[3].push_back(4);
 	vector<vector<double>> caps; caps.resize(n);
 	for (vector<double> &v : caps)
 		v.resize(n);
 	caps[0][1] = 4;
-	caps[0][2] = 3;
-	caps[0][5] = 3;
-	caps[1][3] = 3;
-	caps[2][3] = 3;
+	caps[0][2] = 5;
+	caps[0][3] = 5;
+	caps[1][5] = 5;
+	caps[2][5] = 5;
+	caps[2][0] = 5;
 	caps[1][2] = 1;
 	caps[2][4] = 4;
-	caps[4][1] = 5;
-	caps[4][3] = 3;
-	caps[5][4] = 2;
+	caps[4][1] = 3;
+	caps[4][5] = 5;
+	caps[3][4] = 2;
 	graph g(caps,adj);
 	g.maxflow(0,3);
-	cout << "Max flow of graph1=" << g.cv(3) << '\n'; //should be 9 in this case
+	cout << "Max flow of graph1=" << g.cv(3) << '\n'; //should be 5 in this case
 	for (int i = 0; i < n; ++i)
 		for (int a : adj[i])
 			cout << "    Edge (" << i << ',' << a << ")=" << g.ce(i,a).f << '/' << g.ce(i,a).c << '\n';
@@ -286,4 +301,51 @@ int main()
 			cout << "    Edge (" << i << ',' << a << ")=" << g2.ce(i,a).f << '/' << g2.ce(i,a).c << '\n';
 	for (int i = 0; i < n; ++i)
 		cout << "    Vertex " << i << "=" << g2.cv(i) << '\n';
+
+	//undirected graph (with self-loops and multi-edges)
+	int n3 = 4, m3 = 6;
+	vector<vector<int>> adj3; adj3.resize(n3);
+	vector<vector<double>> caps3; caps3.resize(n);
+	for (vector<double> &v : caps3)
+		v.resize(n);
+	vector<int> edges_l = {1,2,3,2,3,4};
+	vector<int> edges_r = {2,3,1,2,4,3};
+	vector<int> edges_c = {3,4,2,5,3,3};
+	for (int i = 0; i < m3; ++i)
+	{
+		--edges_l[i]; --edges_r[i];
+		if (edges_l[i] == edges_r[i])
+			continue; //don't add self-loops
+		adj3[edges_l[i]].push_back(edges_r[i]);
+		adj3[edges_r[i]].push_back(edges_l[i]);
+		caps3[edges_l[i]][edges_r[i]] += edges_c[i];
+		caps3[edges_r[i]][edges_l[i]] += edges_c[i];
+	}
+	graph g3(caps3,adj3);
+	g3.maxflow(0,n3-1);
+	cout << "Max flow of graph3=" << g3.cv(n3-1) << '\n'; //should be 5
+	for (int i = 0; i < n3; ++i)
+		for (int a : adj3[i])
+			cout << "    Edge (" << i << ',' << a << ")=" << g3.ce(i,a).f << '/' << g3.ce(i,a).c << '\n';
+	for (int i = 0; i < n3; ++i)
+		cout << "    Vertex " << i << "=" << g3.cv(i) << '\n';
+
+	//small graph
+	int n4 = 3;
+	vector<vector<int>> adj4; adj4.resize(n4);
+	vector<vector<double>> caps4; caps4.resize(n4);
+	for (vector<double> &v : caps4)
+		v.resize(n);
+	adj4[0].push_back(1);
+	adj4[1].push_back(2);
+	caps4[0][1] = 1;
+	caps4[1][2] = 1;
+	graph g4(caps4,adj4);
+	g4.maxflow(0,n4-1);
+	cout << "Max flow of graph4=" << g4.cv(n4-1) << '\n'; //should be 1
+	for (int i = 0; i < n4; ++i)
+		for (int a : adj4[i])
+			cout << "    Edge (" << i << ',' << a << ")=" << g4.ce(i,a).f << '/' << g4.ce(i,a).c << '\n';
+	for (int i = 0; i < n4; ++i)
+		cout << "    Vertex " << i << "=" << g4.cv(i) << '\n';
 }
