@@ -176,6 +176,7 @@ struct avl
 			return get(a->r,i-lc-1);
 	}
 };
+//all operators are log time except print
 struct avlt
 {
 	avl* root;
@@ -202,11 +203,11 @@ struct avlt
 	{
 		return avl::get(root,i);
 	}
-	vt& operator()(kt key)
+	vt& operator()(kt key) //finds based on key
 	{
 		return find(key);
 	}
-	vt& operator[](int i)
+	vt& operator[](int i) //finds the ith value from the left for in-order traversal
 	{
 		return get(i);
 	}
