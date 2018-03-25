@@ -19,7 +19,8 @@ For example, Kruskal's algorithm and uptrees are in the same file.
 * Numeric:
 	* Euclidean algorithm(s) - GCD, LCM, modular inverse
 	* Sieve of Eratosthenes - all prime numbers less than or equal to *n*
-
+* Strings:
+	* Matching - Tries and Knuth-Morris-Pratt
 
 
 ### Unsorted List of (Eventual) Planned Code:
