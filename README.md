@@ -1,7 +1,7 @@
 ## Code Archive
 
 This is a archive of various common data structures, algorithms, and other things. Re-implementation isn't very fun.
-
+Implementation is oriented primarily towards competitive programming, so you won't see templating or OO in use here, although all implementations should be adaptable.
 
 Things are categorized into folders, and all tied code is placed into a single sourcecode file (for easy access, compilation, and testing).
 For example, Kruskal's algorithm and uptrees are in the same file.
