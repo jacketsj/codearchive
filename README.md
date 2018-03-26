@@ -10,6 +10,7 @@ For example, Kruskal's algorithm and uptrees are in the same file.
 * Arrays:
 	* Binary search (genericized) - can allow for any valid functional input
 	* Counting sort - implemented to allow arbitrary values in input array, but runtime will depend on the range.
+	* Comparison sorts - Mergesort
 * Geometry:
 	* Line intersection
 	* Convex hull - Both gift wrapping (*O(nh)*) and Graham Scan (*O(nlog n)*)
@@ -20,13 +21,15 @@ For example, Kruskal's algorithm and uptrees are in the same file.
 	* Euclidean algorithm(s) - GCD, LCM, modular inverse
 	* Sieve of Eratosthenes - all prime numbers less than or equal to *n*
 * Strings:
-	* Matching - Tries and Knuth-Morris-Pratt
+	* Matching - Tries and Knuth-Morris-Pratt (with arbitrary alphabet size for the latter)
+* Trees:
+	* Balanced trees - AVL Tree
 
 
 ### Unsorted List of (Eventual) Planned Code:
-* Balanced trees: Treaps, AVL trees, Splay trees
+* Balanced trees: Treaps, Splay trees
 * Indexing trees: BITs, Segtrees, Quadtrees, general k-d trees
-* More sorts: Mergesort, Heapsort, Quicksort, Bucket sort, Radix sort
+* More sorts: Heapsort, Quicksort, Bucket sort, Radix sort
 * Big integers
 * More geometry: Nearest pair, line sweep, online convex hull + convex layers (with Overmars and van Leeuwen)
 * SQRT decomposition
