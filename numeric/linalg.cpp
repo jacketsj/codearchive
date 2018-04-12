@@ -137,6 +137,18 @@ struct mtr
 				ret.p(i,j) += o.p(i,j);
 		return ret;
 	}
+	mtr operator^(int k)
+	{
+		mtr ret = i(d), dub(*this);
+		while (k > 0)
+		{
+			if (k % 2 == 1)
+				ret = ret * dub;
+			dub = dub * dub;
+			k /= 2;
+		}
+		return ret;
+	}
 	static mtr i(int d)
 	{
 		mtr ret(d);
@@ -163,11 +175,12 @@ int main()
 	ios::sync_with_stdio(0);
 	cin.tie(NULL);
 
-	ld p = 0, y = M_PI/3, r = 0; //pitch, yaw, roll
+	ld p = 0, y = M_PI/6, r = 0; //pitch, yaw, roll
 	//generate rotation matrix for these dimensions
 	mtr R0[] = {mtr::rot(3,0,p),mtr::rot(3,1,y),mtr::rot(3,2,r)};
 	mtr R = R0[0]*R0[1];
 	R = R*R0[2];
+	R = R^2; //rotate twice
 	//generate the coordinates for a cube with side lengths of 1
 	vector<vpt> cube;
 	for (ld i = -0.5; i < 1.5; i += 1)
