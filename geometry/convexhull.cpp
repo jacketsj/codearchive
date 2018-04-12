@@ -2,11 +2,13 @@
 using namespace std;
 #define eps 1e-10 //may want to change
 
+typedef long double ld;
+
 struct pt
 {
-	double x, y;
+	ld x, y;
 	pt() {}
-	pt(double x, double y) : x(x), y(y) {}
+	pt(ld x, ld y) : x(x), y(y) {}
 	pt operator+(const pt &o) const
 	{
 		return pt(x+o.x,y+o.y);
@@ -15,16 +17,20 @@ struct pt
 	{
 		return pt(x-o.x,y-o.y);
 	}
+	ld len() const
+	{
+		return sqrt(x*x+y*y);
+	}
 };
 
 pt basis;
-inline double p2(double a)
+inline ld p2(ld a)
 {
 	return a*a;
 }
 bool ang_compare(const pt &a, const pt &b)
 {
-	double det = (b.x-a.x)*(basis.y-a.y) - (basis.x-a.x)*(b.y-a.y);
+	ld det = (b.x-a.x)*(basis.y-a.y) - (basis.x-a.x)*(b.y-a.y);
 	if (det-eps > 0)
 		return false;
 	if (det+eps < 0)
@@ -127,6 +133,39 @@ vector<int> grahamscan(const vector<pt> &points)
 	return ret;
 }
 
+ld area(vector<int> ch, const vector<pt> &points)
+{
+	//remove dupe points if necessary to avoid div by 0
+	vector<int> ch2;
+	for (auto i : ch)
+	{
+		bool f = false;
+		for (auto j : ch2)
+			if ((points[i]-points[j]).len() < eps)
+			{
+				f = true;
+				break;
+			}
+		if (!f)
+			ch2.push_back(i);
+	}
+	ch = ch2;
+	//now compute area of convex hull
+	int L = ch.size();
+	ld area = 0;
+	for (int i = 0; i < L; ++i)
+	{
+		int k = ch[i], kk = ch[(i+1)%L]; //curr, next, prev vertices
+		pt dv = points[kk]-points[k]; //transition vector
+		ld dvd = sqrt(p2(dv.x)+p2(dv.y));
+		pt d0 = points[ch[0]]-points[k]; //taking current to be relative origin
+		ld mult = (d0.x*dv.x+d0.y*dv.y)/(p2(dv.x)+p2(dv.y)); //a . b / (b . b)
+		pt rej = d0 - pt(mult*dv.x,mult*dv.y); //vector rejection
+		area += (dvd/2)*sqrt(p2(rej.x)+p2(rej.y)); //base * height / 2 (height is zero if colinear/same pt)
+	}
+	return area;
+}
+
 //usage
 int main()
 {
@@ -156,4 +195,7 @@ int main()
 	for (int k : ch)
 		cout << '(' << points[k].x << ',' << points[k].y << "),";
 	cout << '\n';
+
+	//area
+	cout << "Area of convex hull is " << area(ch, points) << ".\n";
 }
